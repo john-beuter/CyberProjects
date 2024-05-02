@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net"
 	//"fmt"
 	"strconv"
@@ -10,10 +11,17 @@ import (
 // Blast it with packets and listen for the connection?
 func scanIP(address string) {
 
-	for i := 0; i < 1000; i++ {
-		s := net.JoinHostPort(address, strconv.Itoa(i))
-		net.Dial("tcp", s) //Trying to make connection
+	for i := 0; i < 24; i++ {
+		port := strconv.Itoa(i)
+		s := net.JoinHostPort(address, port)
+		test, err := net.Dial("tcp", s) //Trying to make connection
+		if err != nil{
+			fmt.Println("failed to connect port: " + port)//If the connection fails then log that the we were unable to establish connection
+		}
+		fmt.Print(test)		
 	}
+
+
 
 	//Only listen back on a select IP
 
@@ -21,4 +29,5 @@ func scanIP(address string) {
 
 func main() {
 	println("test")
+	scanIP("192.168.4.76")
 }
