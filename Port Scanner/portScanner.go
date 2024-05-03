@@ -16,6 +16,7 @@ func scanIP(address string) {
 		port := strconv.Itoa(i)
 		s := net.JoinHostPort(address, port)
 		connect, err := net.Dial("tcp", s) //Trying to make connection
+
 		if err != nil {
 			//fmt.Println("failed to connect port: " + port) //If the connection fails then log that the we were unable to establish connection
 		}
