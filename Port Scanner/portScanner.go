@@ -12,19 +12,21 @@ var wait sync.WaitGroup
 func scanPort(host string, c chan string) {
 	connect, err := net.Dial("tcp", host) //Trying to make connection
 	port := host[len(host)-3:]
+	var output string
 	if err != nil {
 		//This would print each port that we failed to connect to
 		//fmt.Println("Port " + port + " is closed")
 
-		output := port + " is closed"
-		c <- output
+		output = port + " is closed"
 	}
 
 	if connect != nil { // IF we have a connection, then record that
 		//fmt.Println("Port " + port + " is open")
-		output := port + " is open"
-		c <- output
+		output = port + " is open"
 	}
+
+	
+	c <- output
 	close(c)
 //	defer wait.Done() //When the function is done then decrement 
 }
