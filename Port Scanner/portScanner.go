@@ -21,7 +21,7 @@ func scanPort(host string){
 		fmt.Println("Port " + port + " is open")
 	}
 
-//	defer wait.Done()
+	defer wait.Done()
 } 
 
 
