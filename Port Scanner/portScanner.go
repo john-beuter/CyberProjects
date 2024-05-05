@@ -16,7 +16,6 @@ func scanPort(host string, c chan string) {
 	if err != nil {
 		//This would print each port that we failed to connect to
 		//fmt.Println("Port " + port + " is closed")
-
 		output = port + " is closed"
 	}
 
@@ -24,10 +23,9 @@ func scanPort(host string, c chan string) {
 		//fmt.Println("Port " + port + " is open")
 		output = port + " is open"
 	}
-
 	
 	c <- output
-	close(c)
+	//close(c)
 //	defer wait.Done() //When the function is done then decrement 
 }
 
