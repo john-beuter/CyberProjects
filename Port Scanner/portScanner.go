@@ -30,32 +30,12 @@ func scanPort(port int, c chan string, address string) {
 
 		c <- output
 	}
-	//close(c)
-	//	defer wait.Done() //When the function is done then decrement
 }
 
 // Function should take an IP address as a parameter and enumerate that IP
 func scanIP(address string) {
-	// for i := 200; i < 224; i++ {
-	// 	wait.Add(1)
-	// 	port := strconv.Itoa(i)
-	// 	s := net.JoinHostPort(address, port)
-	// 	go scanPort(s)
-	// }
-	// wait.Wait()
-
-	//Make the second parameter of make be the ports
-	//Could use _ ?
-
 	c := make(chan string, 24)
 	go scanPort(cap(c), c, address) //use the first in as a parameter for the loop.
-
-	// for i := 200; i < 224; i++ {
-	// 	port := strconv.Itoa(i)
-	// 	s := net.JoinHostPort(address, port)
-	// 	fmt.Println(i - 200)
-	// 	go scanPort(s, c)
-	// }
 	for i := range c {
 		fmt.Println(i)
 	}
