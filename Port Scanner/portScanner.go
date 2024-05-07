@@ -11,16 +11,14 @@ var wait sync.WaitGroup
 
 func scanPort(port int, c chan string, address string) {
 
-	for i := range port {
+  for i := 0; i < port; i++ {
 		portValue := strconv.Itoa(i)
 		host := net.JoinHostPort(address, portValue)
 		connect, err := net.Dial("tcp", host) //Trying to make connection
 		portValue = host[len(host)-2:]
 		var output string
-		if err != nil {
-			//This would print each port that we failed to connect to
-			//fmt.Println("Port " + port + " is closed")
-			output = portValue + " is closed"
+		
+    if err != nil {
 		}
 
 		if connect != nil { // IF we have a connection, then record that
@@ -38,8 +36,9 @@ func scanIP(address string) {
 	go scanPort(cap(c), c, address) //use the first in as a parameter for the loop.
 	for i := range c {
 		fmt.Println(i)
-	}
+	}//For each port  
 }
+
 
 func main() {
 	scanIP("localhost")
