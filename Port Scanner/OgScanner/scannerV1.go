@@ -15,11 +15,9 @@ func scanPort(host string) {
 	var output string
 	if err != nil {
 		output = port + " is closed"
-	}else{ // IF we have a connection, then record that
-		//fmt.Println("Port " + port + " is open")
+	}else{ // IF we have a connection record that then close
 		output = port + " is open"
 		connect.Close()
-		//fmt.Sprintf("%s is open", port)
 	}
 
 	fmt.Println(output)
@@ -27,8 +25,8 @@ func scanPort(host string) {
 }
 
 // Function should take an IP address as a parameter and enumerate that IP
-func scanIP(address string) {
-	for i := 200; i < 224; i++ {
+func scanIP(address string, start int, end int) {
+	for i := start; i < end; i++ {
 		wait.Add(1)
 		port := strconv.Itoa(i)
 		s := net.JoinHostPort(address, port)
@@ -38,5 +36,5 @@ func scanIP(address string) {
 }
 
 func main() {
-	scanIP("localhost")
+	scanIP("localhost", 1, 35)
 }
