@@ -9,17 +9,15 @@ import (
 
 var wait sync.WaitGroup
 
-func scanPort(port int, c chan string, address string) {
-
-  for i := 0; i < port; i++ {
-		portValue := strconv.Itoa(i)
-		host := net.JoinHostPort(address, portValue)
-		connect, err := net.Dial("tcp", host) //Trying to make connection
-		portValue = host[len(host)-2:]
+func scanPort(c chan string, address string) {
+//The capacity of the channel is the port range. This meanss that each routine would scan 24 ports.
+		connect, err := net.Dial("tcp", address) //Trying to make connection
+    portValue := address[len(address)-2:]
 		var output string
 		
     if err != nil {
-		}
+	    output = portValue + " is closed" 	
+    }
 
 		if connect != nil { // IF we have a connection, then record that
 			//fmt.Println("Port " + port + " is open")
@@ -27,15 +25,20 @@ func scanPort(port int, c chan string, address string) {
 		}
 
 		c <- output
+    close(c)
 	}
-}
 
 // Function should take an IP address as a parameter and enumerate that IP
 func scanIP(address string) {
-	c := make(chan string, 24)
-	go scanPort(cap(c), c, address) //use the first in as a parameter for the loop.
-	for i := range c {
-		fmt.Println(i)
+	c := make(chan string, 24) //Make 24 channnels to communicate through.
+  for i := 0; i < cap(c); i++ {
+		portValue := strconv.Itoa(i)
+		host := net.JoinHostPort(address, portValue)
+    go scanPort(c, host) //use the first in as a parameter for the loop.
+  }
+
+	for i := range c { //channel only returns one value from range 
+    fmt.Println(i)
 	}//For each port  
 }
 
@@ -43,3 +46,6 @@ func scanIP(address string) {
 func main() {
 	scanIP("localhost")
 }
+
+/// Goals: Communicate between routines using channels. A channel can transmit infromation like a string. Create a routine for each port.
+//Does channel return the capacity each time? 
