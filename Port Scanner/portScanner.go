@@ -25,7 +25,6 @@ func scanPort(c chan string, address string) {
 		c <- output
 	}
 
-// Function should take an IP address as a parameter and enumerate that IP
 func scanIP(address string) {
 	c := make(chan string, 24) //Make 24 channnels to communicate through.
   for i := 0; i < cap(c); i++ {
@@ -44,5 +43,3 @@ func main() {
 	scanIP("localhost")
 }
 
-/// Goals: Communicate between routines using channels. A channel can transmit infromation like a string. Create a routine for each port.
-//Does channel return the capacity each time? 
