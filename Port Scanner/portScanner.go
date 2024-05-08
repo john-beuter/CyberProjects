@@ -25,7 +25,7 @@ func scanPort(c chan string, address string) {
 		}
 
 		c <- output
-    close(c)
+    	close(c)
 	}
 
 // Function should take an IP address as a parameter and enumerate that IP
