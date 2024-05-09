@@ -5,16 +5,19 @@ import (
 	"net"
 	"strconv"
 	"sync"
+	"strings"
 )
 
 var wait sync.WaitGroup
 
 func scanPort(host string) {
 	connect, err := net.Dial("tcp", host) //Trying to make connection
-	port := host[len(host)-3:] //I could string strip the : 
+	port := host[len(host)-2:] //I could string strip the : 
+	port = strings.ReplaceAll(port, ":", "")
 	var output string
 	if err != nil {
 		output = port + " is closed"
+		//connect.Close()
 	}else{ // IF we have a connection record that then close
 		output = port + " is open"
 		connect.Close()

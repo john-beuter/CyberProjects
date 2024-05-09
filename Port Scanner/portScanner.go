@@ -5,6 +5,7 @@ import (
 	"net"
 	"strconv"
 	"sync"
+	"strings"
 )
 
 var wait sync.WaitGroup
@@ -13,6 +14,7 @@ func scanPort(c chan string, address string) {
 //The capacity of the channel is the port range. This meanss that each routine would scan 24 ports.
 	connect, err := net.Dial("tcp", address) //Trying to make connection
     portValue := address[len(address)-2:]
+	portValue = strings.ReplaceAll(portValue, ":", "")
 	var output string
 		
     if err != nil {
@@ -31,10 +33,10 @@ func scanIP(address string) {
 		portValue := strconv.Itoa(i)
 		host := net.JoinHostPort(address, portValue)
     	go scanPort(c, host) //use the first in as a parameter for the loop.
-  }
+  	}
 
 	for i := range c { //channel only returns one value from range 
-    fmt.Println(i)
+    	fmt.Println(i)
 	}//For each port  
 }
 
