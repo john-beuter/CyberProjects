@@ -1,32 +1,37 @@
-from pymodbus.client.sync import ModbusTcpClient
+import time
+from pyModbusTCP.client import ModbusClient
 
-# Modbus TCP server address and port
-server_ip = "192.168.14.236" 
-server_port = 502 
+# init
+c = ModbusClient(host='192.168.14.236', port=502, auto_open=True, debug=False)
+bit = True
 
-# Modbus addresses of the coils to write to
-coil_addresses = [0] 
+# main loop
+while True:
+    # write 4 bits in modbus address 0 to 3
+    print('write bits')
+    print('----------\n')
+    for ad in range(4):
+        is_ok = c.write_single_coil(ad, bit)
+        if is_ok:
+            print('coil #%s: write to %s' % (ad, bit))
+        else:
+            print('coil #%s: unable to write %s' % (ad, bit))
+        time.sleep(0.5)
 
-# Connect to the Modbus server
-client = ModbusTcpClient(server_ip, port=server_port)
-client.connect()
+    print('')
+    time.sleep(1)
 
-try:
-    while True:
-        # Manual Override true, Dropboomgate false
-        new_coil_values = [False] 
-       
-        for coil_address, new_coil_value in zip(coil_addresses, new_coil_values):
-            response = client.write_coil(coil_address, new_coil_value, unit=1)  # Unit ID is typically 1
+    # read 4 bits in modbus address 0 to 3
+    print('read bits')
+    print('---------\n')
+    bits = c.read_coils(0, 4)
+    if bits:
+        print('coils #0 to 3: %s' % bits)
+    else:
+        print('coils #0 to 3: unable to read')
 
-            if response.isError():
-                print(f"Modbus Write Coil Error: {response.getExceptionDescription()}")
-            else:
-                print(f"Coil {coil_address} set to {new_coil_value}")
-
-except Exception as e:
-    print(f"Error: {e}")
-
-finally:
-    # Disconnect from the Modbus server
-    client.close()
+    # toggle
+    bit = not bit
+    # sleep 2s before next polling
+    print('')
+    time.sleep(2)
