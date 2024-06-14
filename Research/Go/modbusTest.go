@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"sync"
@@ -9,7 +10,16 @@ import (
 	"github.com/goburrow/modbus"
 )
 
-var wait sync.WaitGroup
+var (
+	ip_address string
+	coil       int
+	coil_val   int
+	wait       sync.WaitGroup
+)
+
+func init() {
+	flag.StringVar(&ip_address, "ip_address", "192.168.13.86", "The port on which to listen for connections")
+}
 
 func jammer(target modbus.Client) {
 

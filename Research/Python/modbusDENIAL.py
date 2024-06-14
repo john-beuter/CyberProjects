@@ -11,11 +11,33 @@ bit = False
 
 # main loop
 while True:
-    is_ok = c.write_single_coil(1, 1)
-    if is_ok:
-        print('coil #%s: write to %s' % (1, 1))
+    print('write bits')
+    print('----------\n')
+    for ad in range(4):
+        is_ok = c.write_single_coil(ad, bit)
+        if is_ok:
+            print('coil #%s: write to %s' % (ad, bit))
+        else:
+            print('coil #%s: unable to write %s' % (ad, bit))
+        time.sleep(0.5)
+
+    print('')
+    time.sleep(1)
+
+    # read 4 bits in modbus address 0 to 3
+    print('read bits')
+    print('---------\n')
+    bits = c.read_coils(0, 4)
+    if bits:
+        print('coils #0 to 3: %s' % bits)
     else:
-        print('coil #%s: unable to write %s' % (1, 1))
+        print('coils #0 to 3: unable to read')
+
+    # toggle
+    bit = not bit
+    # sleep 2s before next polling
+    print('')
+    time.sleep(2)
 
     
 
