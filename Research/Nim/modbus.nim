@@ -1,5 +1,7 @@
 import std/net
 
 let socket = newSocket()
-socket.connect("google.com", Port(80))
+var packet: array[12, char]
+let char packet1[] = [0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0x01, 0x06, 0x00, 0x04, 0x00, 0x01];
+socket.send(packet1)
 

