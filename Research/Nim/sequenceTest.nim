@@ -1,20 +1,22 @@
 import net
+import sequtils
 
-let client: Socket = newSocket()
-client.connect("192.168.13.86", Port(502))
-
-var packet = @["0x00", "0x00", "0x00", "0x00", "0x00", "0x06", "0x01", "0x06", "0x00", "0x04", "0x00", "0x01"]
-
-proc toString(str: seq[string]): string =
-  result = newStringOfCap(len(str))
-  for ch in str:
-    add(result, ch)
+let
+    ip = "192.168.13.86"
+    port = Port(502)
     
-var message = toString(packet)
-    #let message: string = "Test"
+var
+    socket: Socket = newSocket()
 
-echo message
-client.send(message)
 
-client.close()
+socket.connect(ip, port)
+
+var packet: array[12, uint8] = [0x00'u8, 0x00, 0x00, 0x00, 0x00, 0x06, 0x01, 0x05, 0x00, 0x00, 0xFF, 0x00]
+
+let dataSent = packet.toSeq()
+
+socket.send(dataSent)
+
+socket.close()
+
 

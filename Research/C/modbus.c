@@ -12,11 +12,14 @@
 I could expand this to be, give people the idea for how to read the value from the register then tell them
 to find out how to write
 
+Could introduce the denial aspect of the attack here as well. 
+
 */
 
 int main(int argc, char **argv)
 {   
-    int socket_fd, port = 502;
+    int socket_fd;
+    int port = 502;
 	struct sockaddr_in server_addr; //What is this?? 
 	struct hostent *server;
 	int data_len;
@@ -34,11 +37,11 @@ int main(int argc, char **argv)
 	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 
     bzero((char *) &server_addr, sizeof(server_addr)); //zeros struct
-	server_addr.sin_family = AF_INET;
-	server_addr.sin_port = htons(port);
-	bcopy((char *)server->h_addr, (char *)&server_addr.sin_addr.s_addr, server->h_length);
+	server_addr.sin_family = AF_INET; //IPV4 family of comms
+	server_addr.sin_port = htons(port); //Port to connect on
+	bcopy((char *)server->h_addr, (char *)&server_addr.sin_addr.s_addr, server->h_length); //h_addr network addresses for host, sin_addr 
 
-    while (connect(socket_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
+    while (connect(socket_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) //initialize the socket connection
 	{
 			perror("error connecting to server");
 			//return 0;
