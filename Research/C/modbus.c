@@ -6,14 +6,13 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
-//Provided from reference to Thiago Alves github
+//Made possible from reference to Thiago Alves defcon23 talk and code
 
 /***
 I could expand this to be, give people the idea for how to read the value from the register then tell them
 to find out how to write
 
 */
-
 
 int main(int argc, char **argv)
 {   
@@ -34,7 +33,7 @@ int main(int argc, char **argv)
     server = gethostbyname("192.168.13.86");
 	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 
-    bzero((char *) &server_addr, sizeof(server_addr));
+    bzero((char *) &server_addr, sizeof(server_addr)); //zeros struct
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_port = htons(port);
 	bcopy((char *)server->h_addr, (char *)&server_addr.sin_addr.s_addr, server->h_length);
