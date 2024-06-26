@@ -3,8 +3,8 @@ import net
 let client: Socket = newSocket()
 client.connect("127.0.0.1", Port(5555))
 
-while true: 
-    var packet: array[12, string] 
+while true:
+    var packet: array[12, string]
 
     packet[0] = "0x00"
     packet[1] = "0x00"
@@ -18,11 +18,10 @@ while true:
     packet[9] = "0x04"
     packet[10] = "0x00"
     packet[11] = "0x01"
-    
+
 
     echo packet
-    var message: string = 
-    #let message: string = "Test"
+    let message: string = "Test"
     client.send(message)
 
 client.close()
