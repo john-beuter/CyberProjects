@@ -48,6 +48,7 @@ func jammer(target modbus.Client, coil uint16, coil_value int) {
 
 func main() {
 	flag.Parse()
+	fmt.Print(coil)
 	target := ip_address + ":502" //Send Modbus traffic the specified IP on the Modbus port
 	handler := modbus.NewTCPClientHandler(target)
 	handler.Timeout = 10 * time.Second
