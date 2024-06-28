@@ -33,7 +33,7 @@ int main(int argc, char **argv)
     //Modbus packet to send to the PLC and turn LED off
     char packetOff[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00};
 
-    server = gethostbyname("192.168.13.86");
+    server = gethostbyname("");
 	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 
     bzero((char *) &server_addr, sizeof(server_addr)); //zeros struct
