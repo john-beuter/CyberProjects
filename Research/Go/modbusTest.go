@@ -32,6 +32,7 @@ func jammer(target modbus.Client, coil uint16, coil_value int) {
 	for {
 		if coil_value == 1 {
 			results, err := target.WriteSingleCoil(coil, 0xFF00) //Writes a one to coil at position 0. 0xFF00 for 1 and 0x0000 for 0
+			fmt.Println("MODBUS Packet Sent")
 			if err != nil {
 				fmt.Println(err)
 				fmt.Println(results)
