@@ -1,16 +1,25 @@
 import std/[times, os]
-# Simple benchmarking
-let time = cpuTime()
-sleep(100) # Replace this with something to be timed
-echo "Time taken: ", cpuTime() - time
 
-# Current date & time
-let now1 = now()     # Current timestamp as a DateTime in local time
-let now2 = now().utc # Current timestamp as a DateTime in UTC
-let now3 = getTime() # Current timestamp as a Time
+# proc multiply(a: int, b: int): int =
+#     return a * b
 
-# Arithmetic using Duration
-echo "One hour from now      : ", now() + initDuration(hours = 1)
-# Arithmetic using TimeInterval
-echo "One year from now      : ", now() + 1.years
-echo "One month from now     : ", now() + 1.months
+# let x = multiply(3, 4)
+
+const message: string = "Time is "
+
+
+let startTime: DateTime = now()
+let countdownTime = initDuration(seconds = 15)
+
+var elapsedTime: Duration = initDuration()
+
+while countdownTime > elapsedTime:
+    sleep(100)
+    let currentTime: DateTime = now()
+    elapsedTime = currentTime - startTime
+    let timeLeft = countdownTime - elapsedTime
+    let totalSeconds: int64 = timeLeft.inSeconds
+    let minutes: int64 = totalSeconds div 60
+    let seconds: int64 = totalSeconds mod 60
+    echo message, minutes, ':', seconds
+
