@@ -82,22 +82,47 @@ func denial(ip_address string, port string, jamming int, runtime int, coil uint1
 	wait.Wait()
 }
 
-func toggle(ip_address string, port string, coil uint16, coil_value int) {
-	if coil_value == 1 {
-		results, err := modbusConnection(ip_address, port).WriteSingleCoil(coil, 0xFF00) //Writes a one to coil at position 0. 0xFF00 for 1 and 0x0000 for 0
-		if err != nil {
-			fmt.Println(err)
-			fmt.Println(results)
+func toggle(ip_address string, port string, coil uint16, coil_value int, cycle bool, timeCycle int, cycleDelay int) {
+	if cycle {
+		var isBreak bool
+		timer2 := time.NewTimer(time.Duration(timeCycle) * time.Minute) //Do I want to use a timer or number of flashes?
+		go func() {
+			<-timer2.C
+			fmt.Println("Ending toggle")
+			isBreak = true
+		}()
+		for {
+			results, err := modbusConnection(ip_address, port).WriteSingleCoil(coil, 0xFF00)
+			time.Sleep(time.Duration(cycleDelay) * time.Second)
+			result, err1 := modbusConnection(ip_address, port).WriteSingleCoil(coil, 0x0000)
+			time.Sleep(time.Duration(cycleDelay) * time.Second)
+
+			if err != nil {
+				fmt.Println(err)
+				fmt.Println(err1)
+				fmt.Println(results)
+				fmt.Println(result)
+			}
+
+			if isBreak {
+				break
+			}
 		}
 	} else {
-		results, err := modbusConnection(ip_address, port).WriteSingleCoil(coil, 0x0000)
-		if err != nil {
-			fmt.Println(err)
-			fmt.Println(results)
-			fmt.Print("I AM IN TOGGLE")
+		if coil_value == 1 {
+			results, err := modbusConnection(ip_address, port).WriteSingleCoil(coil, 0xFF00) //Writes a one to coil at position 0. 0xFF00 for 1 and 0x0000 for 0
+			if err != nil {
+				fmt.Println(err)
+				fmt.Println(results)
+			}
+		} else {
+			results, err := modbusConnection(ip_address, port).WriteSingleCoil(coil, 0x0000)
+			if err != nil {
+				fmt.Println(err)
+				fmt.Println(results)
+			}
 		}
 	}
-
 }
 
 func main() {
@@ -135,6 +160,23 @@ func main() {
 			go denial(ip_address, port, jamming, runtime, coil, coil_value)
 			//go denial("192.168.13.86", 500, 1, 0, 0)
 		} else if userSelection == 2 {
+			var timeCycle int
+			var cycleDelay int
+			var cycle bool
+			fmt.Println("If repeated toggle enter 1, if signle toggle enter 0")
+			fmt.Scanln(&cycle)
+
+			if cycle {
+				fmt.Println("Enter cylce time")
+				fmt.Scanln(&timeCycle)
+
+				fmt.Println("Enter delay between cycle in seconds")
+				fmt.Scanln(&cycleDelay)
+			} else {
+				timeCycle = 0
+				cycleDelay = 0
+			}
+
 			var ip_address string
 			fmt.Println("Enter an ip address")
 			fmt.Scanln(&ip_address)
@@ -151,7 +193,8 @@ func main() {
 			fmt.Println("Enter a coil value:")
 			fmt.Scanln(&coil_value)
 
-			go toggle(ip_address, port, coil, coil_value)
+			go toggle(ip_address, port, coil, coil_value, cycle, timeCycle, cycleDelay)
+
 		} else if userSelection == 3 {
 			var ip_address string
 			fmt.Println("Enter an ip address")
