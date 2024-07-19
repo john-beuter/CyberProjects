@@ -89,7 +89,7 @@ func denial(ip_address string, port string, jamming int, runtime int, coil uint1
 func toggle(ip_address string, port string, coil uint16, coil_value int, cycle bool, timeCycle int, cycleDelay int) {
 	if cycle {
 		var isBreak bool
-		timer2 := time.NewTimer(time.Duration(timeCycle) * time.Minute) //Do I want to use a timer or number of flashes?
+		timer2 := time.NewTimer(time.Duration(timeCycle) * time.Second) //Do I want to use a timer or number of flashes?
 		go func() {
 			<-timer2.C
 			fmt.Println("Ending toggle")
@@ -169,10 +169,10 @@ func main() {
 			fmt.Scanln(&cycle)
 
 			if cycle {
-				fmt.Println("Enter cylce time")
+				fmt.Println("Enter how long to repeat cycle for (in seconds)")
 				fmt.Scanln(&timeCycle)
 
-				fmt.Println("Enter delay between cycle in seconds")
+				fmt.Println("Enter delay between cycle (in seconds)")
 				fmt.Scanln(&cycleDelay)
 			} else {
 				timeCycle = 0
@@ -229,10 +229,10 @@ func main() {
 				fmt.Scanln(&cycle)
 
 				if cycle {
-					fmt.Println("Enter cylce time")
+					fmt.Println("Enter how long to repeat cycle for (in seconds)")
 					fmt.Scanln(&timeCycle)
 
-					fmt.Println("Enter delay between cycle in seconds")
+					fmt.Println("Enter delay between cycle (in seconds)")
 					fmt.Scanln(&cycleDelay)
 				} else {
 					timeCycle = 0
@@ -244,7 +244,7 @@ func main() {
 				fmt.Println("Enter a number of jammers")
 				fmt.Scanln(&jamming)
 
-				fmt.Println("Enter a runtime:")
+				fmt.Println("Enter a runtime (in minutes):")
 				fmt.Scanln(&runtime)
 			}
 
