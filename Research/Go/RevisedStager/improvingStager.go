@@ -143,6 +143,9 @@ func select_1_options() {
 	var port string
 	fmt.Println("Enter a port (default Modbus port is 502)")
 	fmt.Scanln(&port)
+	if port == "" {
+		port = "502"
+	}
 
 	var jamming int
 	fmt.Println("Enter a number of jammers")
