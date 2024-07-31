@@ -4,5 +4,7 @@ Go Modbus stager allows an attacker to stage multiple attacks. These attacks inc
 
 ### Future Improvements
 
-Store the queued attacks in an array or list that the user can view during run time what attacks are occuring and when they will complete.
-For the staged attacks, if the on/off functionality the light remains on or off indefinitely. Add a field for duration: "How long should value remain On/Off? [INSERT TIME IN MIN]" 
+- Store the queued attacks in an array or list that the user can view during run time what attacks are occuring and when they will complete.
+- For the staged attacks, if the on/off functionality the light remains on or off indefinitely. Add a field for duration: "How long should value remain On/Off? [INSERT TIME IN MIN]" 
+- Make the program use structs instead of variables to store user inputted information
+- Potentially allow the attackers to have JSON objects to accept and pars options
