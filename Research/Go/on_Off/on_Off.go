@@ -9,14 +9,6 @@ import (
 	"github.com/goburrow/modbus" //Import the necessary modbus library
 )
 
-// var (
-// 	ip_select int
-// )
-
-// func init() {
-// 	flag.IntVar(&ip_select, "ip selection", 0, "IP in array you want to select")
-// }
-
 func modbusConnection(ip_address string, port string) modbus.Client {
 	target := ip_address + ":" + port //Send Modbus traffic the specified IP on the Modbus port
 	handler := modbus.NewTCPClientHandler(target)
@@ -49,13 +41,6 @@ func toggle(ip_address string, port string, coil uint16, coil_value int) {
 }
 
 func main() {
-
-	//flag.Parse()
-	//var arrIPs = [3]string{"192.168.12.151", "192.168.13.64", "192.168.13.86"} I should use os.Args instead of flags. That way I can keep track of how many args
-
-	/*
-		If there are more that X arguements then run the prompt
-	*/
 
 	argsWithoutProg := os.Args[1:]
 	var ip_address string
@@ -106,10 +91,8 @@ func main() {
 		}
 
 		port = "502"
-
 		coil = uint16(coil_selected)
 		coil_value = coil_value_selected
-
 	}
 
 	toggle(ip_address, port, coil, coil_value)
