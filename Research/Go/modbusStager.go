@@ -143,6 +143,9 @@ func main() {
 			var port string
 			fmt.Println("Enter a port (default Modbus port is 502)")
 			fmt.Scanln(&port)
+			if port == "" {
+				port = "502"
+			}
 
 			var jamming int
 			fmt.Println("Enter a number of jammers")
@@ -186,6 +189,9 @@ func main() {
 			var port string
 			fmt.Println("Enter a port (default Modbus port is 502)")
 			fmt.Scanln(&port)
+			if port == "" {
+				port = "502"
+			}
 
 			var coil uint16
 			fmt.Println("Enter a coil:")
@@ -215,6 +221,9 @@ func main() {
 			var port string
 			fmt.Println("Enter a port (default Modbus port is 502)")
 			fmt.Scanln(&port)
+			if port == "" {
+				port = "502"
+			}
 
 			var coil uint16
 			fmt.Println("Enter a coil:")

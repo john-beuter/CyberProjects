@@ -187,6 +187,9 @@ func select_2_options() {
 	var port string
 	fmt.Println("Enter a port (default Modbus port is 502)")
 	fmt.Scanln(&port)
+	if port == "" {
+		port = "502"
+	}
 
 	var coil uint16
 	fmt.Println("Enter a coil:")
@@ -218,6 +221,9 @@ func select_3_options() {
 	var port string
 	fmt.Println("Enter a port (default Modbus port is 502)")
 	fmt.Scanln(&port)
+	if port == "" {
+		port = "502"
+	}
 
 	var coil uint16
 	fmt.Println("Enter a coil:")
