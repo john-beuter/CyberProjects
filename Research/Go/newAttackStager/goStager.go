@@ -175,9 +175,9 @@ func select_2_options() {
 	fmt.Scanln(&cycleSelect)
 	if strings.ToLower(cycleSelect) == "y" {
 		cycle = true
-		fmt.Println("Enter how long to repeat cycle for (in seconds): ")
+		fmt.Println("Enter how long do you want the loop to last for (in seconds): ")
 		fmt.Scanln(&timeCycle)
-		fmt.Println("Enter delay between cycle (in seconds): ")
+		fmt.Println("Enter delay between On and Off (in seconds): ")
 		fmt.Scanln(&cycleDelay)
 	} else {
 		cycle = false
@@ -189,18 +189,18 @@ func select_2_options() {
 	fmt.Scanln(&ip_address)
 
 	var port string
-	fmt.Println("Enter a port (default Modbus port is 502)")
+	fmt.Println("Enter a port (default Modbus port is 502): ")
 	fmt.Scanln(&port)
 	if port == "" {
 		port = "502"
 	}
 
 	var coil uint16
-	fmt.Println("Enter a coil:")
+	fmt.Println("Enter a coil: ")
 	fmt.Scanln(&coil)
 
 	var coil_value int
-	fmt.Println("Enter a coil value:")
+	fmt.Println("Enter a coil value: ")
 	fmt.Scanln(&coil_value)
 
 	go on_Off(ip_address, port, coil, coil_value, cycle, timeCycle, cycleDelay)
@@ -216,14 +216,14 @@ func select_3_options() {
 	var jamming int
 	var selector bool
 
-	fmt.Println("Enter 1 for On/Off or 0 for Denial")
+	fmt.Println("Enter 1 for On/Off or 0 for Denial: ")
 	fmt.Scanln(&selector)
 
-	fmt.Println("Enter an ip address")
+	fmt.Println("Enter an ip address: ")
 	fmt.Scanln(&ip_address)
 
 	var port string
-	fmt.Println("Enter a port (default Modbus port is 502)")
+	fmt.Println("Enter a port (default Modbus port is 502): ")
 	fmt.Scanln(&port)
 	if port == "" {
 		port = "502"
@@ -238,13 +238,13 @@ func select_3_options() {
 	fmt.Scanln(&coil_value)
 
 	if selector {
-		fmt.Println("Enter 1 to Cycle, enter 0 for On/Off")
+		fmt.Println("Enter 1 to Cycle, enter 0 for On/Off:")
 		fmt.Scanln(&cycle)
 		if cycle {
-			fmt.Println("Enter how long to repeat Cycle for (in seconds)")
+			fmt.Println("Enter how long to repeat Cycle for (in seconds):")
 			fmt.Scanln(&timeCycle)
 
-			fmt.Println("Enter delay between Cycle (in seconds)")
+			fmt.Println("Enter delay between Cycle (in seconds):")
 			fmt.Scanln(&cycleDelay)
 		} else {
 			timeCycle = 0
@@ -253,7 +253,7 @@ func select_3_options() {
 		}
 	} else {
 
-		fmt.Println("Enter a number of jammers")
+		fmt.Println("Enter a number of jammers:")
 		fmt.Scanln(&jamming)
 
 		fmt.Println("Enter a runtime (in minutes):")
