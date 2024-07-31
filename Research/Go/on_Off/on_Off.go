@@ -2,10 +2,20 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/goburrow/modbus" //Import the necessary modbus library
 )
+
+// var (
+// 	ip_select int
+// )
+
+// func init() {
+// 	flag.IntVar(&ip_select, "ip selection", 0, "IP in array you want to select")
+// }
 
 func modbusConnection(ip_address string, port string) modbus.Client {
 	target := ip_address + ":" + port //Send Modbus traffic the specified IP on the Modbus port
@@ -39,24 +49,68 @@ func toggle(ip_address string, port string, coil uint16, coil_value int) {
 }
 
 func main() {
+
+	//flag.Parse()
+	//var arrIPs = [3]string{"192.168.12.151", "192.168.13.64", "192.168.13.86"} I should use os.Args instead of flags. That way I can keep track of how many args
+
+	/*
+		If there are more that X arguements then run the prompt
+	*/
+
+	argsWithoutProg := os.Args[1:]
 	var ip_address string
-	fmt.Println("Enter an ip address")
-	fmt.Scanln(&ip_address)
-
 	var port string
-	fmt.Println("Enter a port (default Modbus port is 502)")
-	fmt.Scanln(&port)
-	if port == "" {
-		port = "502"
-	}
-
 	var coil uint16
-	fmt.Println("Enter a coil:")
-	fmt.Scanln(&coil)
-
 	var coil_value int
-	fmt.Println("Enter a coil value:")
-	fmt.Scanln(&coil_value)
+
+	if len(argsWithoutProg) < 3 {
+		fmt.Println("Enter an ip address")
+		fmt.Scanln(&ip_address)
+
+		fmt.Println("Enter a port (default Modbus port is 502)")
+		fmt.Scanln(&port)
+		if port == "" {
+			port = "502"
+		}
+
+		fmt.Println("Enter a coil:")
+		fmt.Scanln(&coil)
+
+		fmt.Println("Enter a coil value:")
+		fmt.Scanln(&coil_value)
+	} else {
+
+		var arrIPs = [3]string{"192.168.12.151", "192.168.13.64", "192.168.13.86"}
+		//ip_selected, err1 := strconv.Atoi(argsWithoutProg[0])
+		var ip_selected int
+
+		if argsWithoutProg[0] == "PDU" {
+			ip_selected = 0
+		} else if argsWithoutProg[0] == "Master" {
+			ip_selected = 1
+		} else if argsWithoutProg[0] == "John" {
+			ip_selected = 2
+		}
+
+		coil_selected, err1 := strconv.Atoi(argsWithoutProg[1])
+		coil_value_selected, err2 := strconv.Atoi(argsWithoutProg[2])
+
+		ip_address = arrIPs[ip_selected]
+
+		if err1 != nil {
+			fmt.Println("Could not convert arg to int")
+		}
+
+		if err2 != nil {
+			fmt.Println("Could not convert arg to int")
+		}
+
+		port = "502"
+
+		coil = uint16(coil_selected)
+		coil_value = coil_value_selected
+
+	}
 
 	toggle(ip_address, port, coil, coil_value)
 
