@@ -38,6 +38,7 @@ func reader(target modbus.Client, coil uint16) {
 		}
 
 		fmt.Println(result)
+		time.Sleep(2 * time.Second)
 	}
 }
 
@@ -57,7 +58,7 @@ func main() {
 	client := modbus.NewClient(handler) //Create a new Modbus connection
 	reader(client, 0)
 
-	fmt.Println("Starting denial attack...")
+	fmt.Println("Reading Mobus Coils...")
 
 	//Runs the exploit for the specified duration
 	timer2 := time.NewTimer(time.Duration(runtime) * time.Minute)
