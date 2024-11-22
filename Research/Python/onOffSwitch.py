@@ -3,7 +3,7 @@ import sys
 from pyModbusTCP.client import ModbusClient
 
 # init
-c = ModbusClient(host='192.168.13.64', port=502, auto_open=True, debug=False)
+c = ModbusClient(host='192.168.7.227', port=502, auto_open=True, debug=False)
 
 if(sys.argv[2] == "1"):
     print(sys.argv[1])
