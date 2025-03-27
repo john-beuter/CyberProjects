@@ -8,6 +8,7 @@ var
     socket: Socket = newSocket()
     packet: array[12, uint8] #create an array to maually build Modbus packet
     denial: int
+    
 #Fun string manipulation to get the correct hex format of number
 proc trimUpper(num: string): string =
   if num.len >= 2:
@@ -49,28 +50,29 @@ proc denialTimer(durationOfAttack : int, packetPointer: ptr, packet: array): str
 
 
 
-echo "Please enter an IP address: "
-ip = readLine(stdin);
-echo "Please enter a port number (default Modbus port is 502)"
-port = readLine(stdin).parseInt()
+#echo "Please enter an IP address: "
+#ip = readLine(stdin);
+#echo "Please enter a port number (default Modbus port is 502)"
+#port = readLine(stdin).parseInt()
 
 echo "Attempting to connect to " & ip & ":" & $port
 socket.connect(ip, Port(port))
 
-echo "What coil would you like to work with?"
-var coil = readLine(stdin).parseInt()
+
+var coil = 1
 
 let coilString = coil.toHex()
 let (upper, lower) = getUpperLower(coilString)
 
-echo "Would you like to read(0) or write(1) to a coil?"
-let selection = readLine(stdin).parseInt()
+#echo "Would you like to read(0) or write(1) to a coil?"
+#let selection = readLine(stdin).parseInt()
+let selection = 1
 
 if selection == 1:
     echo "Would you like to write a (1) or a (0)?"
     let selectionWrite = readLine(stdin).parseInt()
-    echo "Would you like to run a denial attack yes (1) or no (0)?"
-    denial = readLine(stdin).parseInt()
+    #echo "Would you like to run a denial attack yes (1) or no (0)?"
+    denial = 0
 
     #Create packet to write coil
     if selectionWrite == 1:
